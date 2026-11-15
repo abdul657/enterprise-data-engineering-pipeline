@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
+
 from psycopg import Connection
 
 from .transform import date_dimension_row
@@ -8,7 +10,10 @@ from .transform import date_dimension_row
 
 def initialize_warehouse(conn: Connection[Any], schema_path: str = "sql/schema.sql") -> None:
     """Create warehouse tables and indexes if they do not exist."""
-    conn.execute(open(schema_path, encoding="utf-8").read())
+    schema_sql = Path(schema_path).read_text(encoding="utf-8")
+    for statement in schema_sql.split(";"):
+        if statement.strip():
+            conn.execute(statement)
 
 
 def load_warehouse(
