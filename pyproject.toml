@@ -1,0 +1,14 @@
+[project]
+name = "enterprise-data-engineering-pipeline"
+version = "1.0.0"
+description = "REST and CSV ingestion, data quality, and PostgreSQL dimensional warehouse ETL demo"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
