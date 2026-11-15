@@ -22,10 +22,14 @@ def transform_customers(
     for row in source_rows:
         try:
             source_id = int(row["id"])
-            name = str(row["name"]).strip()
+            name = str(row.get("name") or "").strip()
             email = str(row.get("email") or "").strip().lower()
             company_data = row.get("company") or {}
-            company = str(company_data.get("name") or "").strip() if isinstance(company_data, dict) else ""
+            company = (
+                str(company_data.get("name") or "").strip()
+                if isinstance(company_data, dict)
+                else ""
+            )
 
             if source_id <= 0:
                 raise ValueError("customer id must be positive")
@@ -73,16 +77,22 @@ def transform_orders(
             seen_ids.add(order_id)
 
             if customer_id not in valid_customer_ids:
-                raise ValueError(f"customer_id {customer_id} was not found in the extracted customer source")
+                raise ValueError(
+                    f"customer_id {customer_id} was not found in the extracted customer source"
+                )
 
             order_datetime = _parse_datetime(str(row["order_date"]))
-            amount = Decimal(str(row["amount"]).strip()).quantize(CENT, rounding=ROUND_HALF_UP)
+            amount = Decimal(str(row["amount"]).strip()).quantize(
+                CENT, rounding=ROUND_HALF_UP
+            )
             if not amount.is_finite() or amount < 0:
                 raise ValueError("amount must be a finite, non-negative number")
 
             status = str(row["status"]).strip().lower()
             if status not in VALID_STATUSES:
-                raise ValueError(f"status must be one of: {', '.join(sorted(VALID_STATUSES))}")
+                raise ValueError(
+                    f"status must be one of: {', '.join(sorted(VALID_STATUSES))}"
+                )
 
             orders.append({
                 "source_order_id": order_id,
