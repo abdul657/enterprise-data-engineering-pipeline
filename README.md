@@ -130,7 +130,7 @@ Run the queries in `sql/analytics.sql` to inspect monthly revenue, order value b
 pytest -q
 ```
 
-The current automated tests exercise customer/order normalization, date derivation, duplicate detection, invalid statuses, invalid dates and amounts, and unknown customer references. They do not require PostgreSQL or AWS credentials. The CI workflow also compiles the Python modules. The PostgreSQL upsert path is exercised by running the pipeline against the included Docker Compose database.
+The unit tests exercise customer/order normalization, date derivation, duplicate detection, invalid statuses, invalid dates and amounts, and unknown customer references. A PostgreSQL integration test verifies that the warehouse loader updates existing source order IDs without creating duplicates. GitHub Actions runs both sets of tests against a temporary PostgreSQL 16 service and compiles the Python modules; AWS credentials are not required.
 
 ## Current scope and production considerations
 
